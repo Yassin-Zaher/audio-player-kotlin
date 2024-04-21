@@ -68,6 +68,18 @@ const songs: Song[] = [
     artist: "Camila Cabello ft. Young Thug",
     duration: "3:36",
   },
+  {
+    id: "11",
+    title: "Scala",
+    artist: "Camila Cabello ft. Young Thug",
+    duration: "3:36",
+  },
+  {
+    id: "12",
+    title: "Clout",
+    artist: "Camila Cabello ft. Young Thug",
+    duration: "3:36",
+  },
 ];
 
 export default songs;
