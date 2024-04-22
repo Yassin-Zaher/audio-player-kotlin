@@ -9,12 +9,11 @@ interface AppContextState {
 }
 
 const AppContext = createContext<AppContextState | undefined>(undefined);
-const initialTrack: Song = songs[0];
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [currentTrack, setCurrentTrack] = useState<Song | null>(null);
+  const [currentTrack, setCurrentTrack] = useState<Song | null>(songs[0]);
 
   const togglePlayPause = () => {
     if (currentTrack) {

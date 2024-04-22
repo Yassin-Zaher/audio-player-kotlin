@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { useAppContext } from "../context/AppContext";
 import React, { useEffect, useState } from "react";
+import TextTicker from "react-native-text-ticker";
 
 const PlayingBox = ({ title, subtitle, onPress }) => {
   const { currentTrack, setCurrentTrack } = useAppContext();
@@ -32,9 +33,16 @@ const PlayingBox = ({ title, subtitle, onPress }) => {
               <Text style={{ fontSize: 15, fontWeight: "bold" }}>
                 {currentTrack?.title}
               </Text>
-              <Text style={{ fontSize: 12, color: "grey" }}>
+
+              <TextTicker
+                style={{ fontSize: 12, color: "grey" }}
+                duration={5000}
+                loop
+                repeatSpacer={50}
+                marqueeDelay={1000}
+              >
                 {currentTrack?.artist}
-              </Text>
+              </TextTicker>
             </>
           ) : (
             <Text style={{ fontSize: 15, fontWeight: "bold", color: "blue" }}>
@@ -74,8 +82,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   playSongTochable: {
+    flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
   },
   playingSongImg: {
     marginHorizontal: 10,
@@ -84,13 +93,12 @@ const styles = StyleSheet.create({
     borderRadius: 150 / 2,
   },
   playingSongInfoContainer: {
-    //flex: 1,
-    justifyContent: "center",
-    marginVertical: 3,
+    width: 100,
   },
 
   playingSongPlayPauseContainer: {
     flex: 1,
+    marginLeft: 30,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
