@@ -3,14 +3,16 @@ import { Image, StyleSheet, Text, TextInput, View } from "react-native";
 import { SvgUri } from "react-native-svg";
 import SearchSvg from "../assets/icons/search-alt.svg";
 import { Feather, Entypo, Fontisto } from "@expo/vector-icons";
+import { useAppContext } from "../context/AppContext";
 
 const SearchBox = () => {
+  const { audioFiles } = useAppContext();
   const [postText, setPostText] = useState("");
   return (
     <View style={styles.headerContainer}>
       <View style={styles.searchBarContainer}>
         <TextInput
-          placeholder="Search music"
+          placeholder={`Search in ${audioFiles?.length} traks`}
           style={styles.searchBox}
           value={postText}
           onChangeText={setPostText}

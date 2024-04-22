@@ -4,7 +4,7 @@ import { useAppContext } from "../context/AppContext";
 import React, { useEffect, useState } from "react";
 import TextTicker from "react-native-text-ticker";
 
-const PlayingBox = ({ title, subtitle, onPress }) => {
+const PlayingBox = ({ onPress }) => {
   const { currentTrack, setCurrentTrack } = useAppContext();
 
   const playTrack = (song: Song) => {
@@ -30,9 +30,15 @@ const PlayingBox = ({ title, subtitle, onPress }) => {
         <View style={styles.playingSongInfoContainer}>
           {currentTrack ? (
             <>
-              <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-                {currentTrack?.title}
-              </Text>
+              <TextTicker
+                style={{ fontSize: 15, fontWeight: "bold" }}
+                duration={5000}
+                loop
+                repeatSpacer={50}
+                marqueeDelay={1000}
+              >
+                {currentTrack?.filename}
+              </TextTicker>
 
               <TextTicker
                 style={{ fontSize: 12, color: "grey" }}
@@ -41,7 +47,7 @@ const PlayingBox = ({ title, subtitle, onPress }) => {
                 repeatSpacer={50}
                 marqueeDelay={1000}
               >
-                {currentTrack?.artist}
+                {"Subtitle "}
               </TextTicker>
             </>
           ) : (

@@ -22,7 +22,7 @@ import Animated, {
 import { useAppContext } from "../context/AppContext";
 
 function HomeScreen({ navigation, route }) {
-  const { setCurrentTrack, currentTrack } = useAppContext();
+  const { setCurrentTrack, currentTrack, audioFiles } = useAppContext();
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const navigateToScreen = (screenName: string) => {
     navigation.navigate(screenName);
@@ -69,21 +69,16 @@ function HomeScreen({ navigation, route }) {
 
       <View>
         <ScrollView style={styles.songsContainerScroll}>
-          {Object.values(songs).map((song) => (
-            <SongItem
-              key={song.id}
-              title={song.title}
-              subtitle={song.artist}
-              onPress={() => playTrack(song)}
-            />
+          {audioFiles.map((song) => (
+            <SongItem key={song.id} onPress={() => playTrack(song)} />
           ))}
         </ScrollView>
       </View>
 
       <View>
         <PlayingBox
-          title={selectedSong?.title}
-          subtitle={selectedSong?.artist}
+          title={selectedSong?.filename}
+          subtitle={"subtitle"}
           onPress={() => {
             navigation.navigate("PlayingTrack");
           }}
@@ -103,7 +98,6 @@ const styles = StyleSheet.create({
   },
   songsContainerScroll: {
     height: 500,
-    paddingVertical: 10,
     paddingHorizontal: MARGIN,
   },
   navbtn__active: {
