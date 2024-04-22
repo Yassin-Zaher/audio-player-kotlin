@@ -3,9 +3,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "./src/components/HomePage";
 import PlayLists from "./src/components/PlayLists";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-// react-native-vector-icons/Ionicons otherwise.
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import SongItem from "./src/components/SongItem";
+import SongPage from "./src/components/SongPage";
+import { useState } from "react";
+import { AppProvider } from "./src/context/AppContext";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -14,8 +17,26 @@ const TopTab = createMaterialTopTabNavigator();
 
 function App() {
   return (
-    <NavigationContainer>
-      {/* <TopTab.Navigator>
+    <AppProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="PlayLists" component={PlayLists} />
+          <Stack.Screen
+            name="PlayingTrack"
+            options={{ title: "" }}
+            component={SongPage}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AppProvider>
+  );
+}
+
+export default App;
+
+{
+  /* <TopTab.Navigator>
         <TopTab.Screen
           name="Home"
           component={HomeScreen}
@@ -38,13 +59,5 @@ function App() {
             ),
           }}
         />
-      </TopTab.Navigator> */}
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="PlayLists" component={PlayLists} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+      </TopTab.Navigator> */
 }
-
-export default App;

@@ -1,42 +1,63 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { useAppContext } from "../context/AppContext";
+import React, { useEffect, useState } from "react";
 
-import React, { useState } from "react";
+const PlayingBox = ({ title, subtitle, onPress }) => {
+  const { currentTrack, setCurrentTrack } = useAppContext();
 
-const PlayingBox = ({ title, subtitle }) => {
-  const [paused, setPaused] = useState(false);
-  const hasContent = title && subtitle;
+  const playTrack = (song: Song) => {
+    if (currentTrack && song.id === currentTrack.id) {
+      setCurrentTrack({ ...currentTrack, paused: !currentTrack.paused });
+    } else {
+      // Start playing a new track (reset paused state to false)
+      setCurrentTrack({ ...song, paused: false });
+    }
+  };
+
+  useEffect(() => {
+    console.log(currentTrack);
+  }, [currentTrack]);
   return (
     <View style={styles.playingSongContainer}>
-      <Image
-        style={styles.playingSongImg}
-        source={require("../assets/images/profile.jpeg")}
-      />
+      <TouchableOpacity style={styles.playSongTochable} onPress={onPress}>
+        <Image
+          style={styles.playingSongImg}
+          source={require("../assets/images/profile.jpeg")}
+        />
 
-      <View style={styles.playingSongInfoContainer}>
-        {hasContent ? (
-          <>
-            <Text style={{ fontSize: 15, fontWeight: "bold" }}>{title}</Text>
-            <Text style={{ fontSize: 12, color: "grey" }}>{subtitle}</Text>
-          </>
-        ) : (
-          <Text style={{ fontSize: 15, fontWeight: "bold", color: "blue" }}>
-            Tap to play
-          </Text>
-        )}
-      </View>
+        <View style={styles.playingSongInfoContainer}>
+          {currentTrack ? (
+            <>
+              <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+                {currentTrack?.title}
+              </Text>
+              <Text style={{ fontSize: 12, color: "grey" }}>
+                {currentTrack?.artist}
+              </Text>
+            </>
+          ) : (
+            <Text style={{ fontSize: 15, fontWeight: "bold", color: "blue" }}>
+              Tap to play
+            </Text>
+          )}
+        </View>
+      </TouchableOpacity>
 
       <View style={styles.playingSongPlayPauseContainer}>
-        <FontAwesome5 name={"fast-backward"} />
+        <FontAwesome5 name={"fast-backward"} size={20} />
 
-        <TouchableOpacity onPress={() => setPaused((state) => !state)}>
-          {paused ? (
-            <FontAwesome5 name={"play"} />
+        <TouchableOpacity
+          onPress={() => playTrack(currentTrack)}
+          style={styles.playButtons}
+        >
+          {currentTrack?.paused ? (
+            <FontAwesome5 name={"pause"} size={20} />
           ) : (
-            <FontAwesome5 name={"pause"} />
+            <FontAwesome5 name={"play"} size={20} />
           )}
         </TouchableOpacity>
-        <FontAwesome5 name={"fast-forward"} />
+        <FontAwesome5 name={"fast-forward"} size={20} />
       </View>
     </View>
   );
@@ -52,6 +73,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "space-between",
   },
+  playSongTochable: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   playingSongImg: {
     marginHorizontal: 10,
     width: 50,
@@ -59,7 +84,7 @@ const styles = StyleSheet.create({
     borderRadius: 150 / 2,
   },
   playingSongInfoContainer: {
-    flex: 1,
+    //flex: 1,
     justifyContent: "center",
     marginVertical: 3,
   },

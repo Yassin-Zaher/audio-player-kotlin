@@ -14,11 +14,22 @@ import songs, { Song } from "../constants/songs";
 import SongItem from "./SongItem";
 import PlayingBox from "./PlayingBox";
 import React, { useEffect, useState } from "react";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
+import { useAppContext } from "../context/AppContext";
 
 function HomeScreen({ navigation, route }) {
+  const { setCurrentTrack, currentTrack } = useAppContext();
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const navigateToScreen = (screenName: string) => {
     navigation.navigate(screenName);
+  };
+
+  const playTrack = (song) => {
+    setCurrentTrack(song);
   };
 
   const selectSong = (song) => {
@@ -26,8 +37,8 @@ function HomeScreen({ navigation, route }) {
   };
 
   useEffect(() => {
-    console.log("New State:", selectedSong);
-  }, [selectedSong]);
+    console.log("New State:", currentTrack);
+  }, [currentTrack]);
 
   return (
     <View style={styles.homePageContainer}>
@@ -63,13 +74,21 @@ function HomeScreen({ navigation, route }) {
               key={song.id}
               title={song.title}
               subtitle={song.artist}
-              onPress={() => selectSong(song)}
+              onPress={() => playTrack(song)}
             />
           ))}
         </ScrollView>
       </View>
 
-      <PlayingBox title={selectedSong?.title} subtitle={selectedSong?.artist} />
+      <View>
+        <PlayingBox
+          title={selectedSong?.title}
+          subtitle={selectedSong?.artist}
+          onPress={() => {
+            navigation.navigate("PlayingTrack");
+          }}
+        />
+      </View>
     </View>
   );
 }
