@@ -42,7 +42,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     });
     media = await getAssetsAsync({
       mediaType: "audio",
-      first: media.totalCount,
+      //first: media.totalCount,
     });
     setAudioFiles(media.assets);
   };

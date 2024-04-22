@@ -14,7 +14,13 @@ interface NavButtonProps {
 
 const NavButton: React.FC<NavButtonProps> = ({ title, onPress }) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
+    <TouchableOpacity
+      style={[
+        styles.button,
+        title === "All" ? styles.allButton : null, // Conditionally apply styles
+      ]}
+      onPress={onPress}
+    >
       <Text style={styles.text}>{title}</Text>
     </TouchableOpacity>
   );
@@ -30,6 +36,10 @@ const styles = StyleSheet.create({
     elevation: 5,
     margin: 8,
     backgroundColor: "#E5E5E5",
+  },
+  allButton: {
+    backgroundColor: "#F92457",
+    color: "white", // Custom background color for "All"
   },
   text: {
     fontSize: 16,

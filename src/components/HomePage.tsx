@@ -23,17 +23,12 @@ import { useAppContext } from "../context/AppContext";
 
 function HomeScreen({ navigation, route }) {
   const { setCurrentTrack, currentTrack, audioFiles } = useAppContext();
-  const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const navigateToScreen = (screenName: string) => {
     navigation.navigate(screenName);
   };
 
   const playTrack = (song) => {
     setCurrentTrack(song);
-  };
-
-  const selectSong = (song) => {
-    setSelectedSong(song);
   };
 
   useEffect(() => {
@@ -70,14 +65,18 @@ function HomeScreen({ navigation, route }) {
       <View>
         <ScrollView style={styles.songsContainerScroll}>
           {audioFiles.map((song) => (
-            <SongItem key={song.id} onPress={() => playTrack(song)} />
+            <SongItem
+              title={song.filename}
+              key={song.id}
+              onPress={() => playTrack(song)}
+            />
           ))}
         </ScrollView>
       </View>
 
       <View>
         <PlayingBox
-          title={selectedSong?.filename}
+          title={currentTrack?.filename}
           subtitle={"subtitle"}
           onPress={() => {
             navigation.navigate("PlayingTrack");
