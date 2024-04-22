@@ -1,4 +1,6 @@
 import {
+  getAssetInfoAsync,
+  getAssetsAsync,
   getPermissionsAsync,
   requestPermissionsAsync,
 } from "expo-media-library";
@@ -10,7 +12,14 @@ export default class TrackContext extends Component {
     super(props);
   }
 
-  permessionAlert() {
+  getAudioFiles = async () => {
+    const media = await getAssetsAsync({
+      mediaType: "audio",
+    });
+    console.log(media);
+  };
+
+  permessionAlert = () => {
     Alert.alert("Permission Required", "hhh dir allow malek khayef", [
       {
         text: "بان عليك الأمان",
@@ -25,12 +34,13 @@ export default class TrackContext extends Component {
         },
       },
     ]);
-  }
+  };
 
   getPermission = async () => {
     const permission = await getPermissionsAsync();
     if (permission.granted) {
       // get all the files
+      this.getAudioFiles();
     }
     if (!permission.granted && permission.canAskAgain) {
       const { status, canAskAgain } = await requestPermissionsAsync();
@@ -40,6 +50,7 @@ export default class TrackContext extends Component {
       }
       if (status === "granted") {
         // get All the media files
+        this.getAudioFiles();
       }
       if (status === "denied" && !canAskAgain) {
         // display an Error
@@ -47,7 +58,7 @@ export default class TrackContext extends Component {
     }
   };
   componentDidMount(): void {
-    getPermission();
+    this.getPermission();
   }
   render() {
     return (
