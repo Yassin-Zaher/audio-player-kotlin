@@ -6,11 +6,9 @@ import {
   Pressable,
 } from "react-native";
 import { Fontisto } from "@expo/vector-icons";
-import React from "react";
-import { useAppContext } from "../context/AppContext";
+import React, { useContext } from "react";
 
 const SongItem = ({ title, subtitle, onPress }) => {
-  const { currentTrack } = useAppContext();
   return (
     <TouchableOpacity style={styles.songIntemContainer} onPress={onPress}>
       <View style={styles.songItemText}>

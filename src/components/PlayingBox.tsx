@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { useAppContext } from "../context/AppContext";
-import React, { useEffect, useState } from "react";
+import AppContext, { useAppContext } from "../context/AppContext";
+import React, { useContext, useEffect, useState } from "react";
 import TextTicker from "react-native-text-ticker";
 
 const PlayingBox = ({ onPress }) => {
-  const { currentTrack, setCurrentTrack } = useAppContext();
+  const { currentTrack, audioFiles, dataProvider } = useContext(AppContext);
 
   const playTrack = (song: Song) => {
     if (currentTrack && song.id === currentTrack.id) {

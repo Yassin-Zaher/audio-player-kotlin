@@ -13,28 +13,23 @@ import {
   getPermissionsAsync,
   requestPermissionsAsync,
 } from "expo-media-library";
-import { Alert, Image, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Image, Text, View } from "react-native";
+import { DataProvider } from "recyclerlistview";
 
+const AppContext = createContext();
 interface AppContextState {
   currentTrack: Song | null;
-  setCurrentTrack: (song: Song | null) => void;
-  audioFiles: any;
-  permissionError: false;
+  audioFiles: any[];
+  dataProvider: DataProvider<any>;
 }
 
-const AppContext = createContext<AppContextState | undefined>(undefined);
-
 //----------------------------------------
-export const AppProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  const [currentTrack, setCurrentTrack] = useState<Song | null>();
-  //const [totalTrackFile, setTotalTrackFiles] = useState();
-  const [audioFiles, setAudioFiles] = useState([]);
-  const [permissionError, setPermissionError] = useState(false);
-  useEffect(() => {
-    getPermission();
-  }, []);
+export const AppProvider = ({ children }) => {
+  const [state, setState] = useState<AppContextState>({
+    currentTrack: null,
+    audioFiles: [],
+    dataProvider: new DataProvider((r1, r2) => r1 !== r2),
+  });
 
   // Handling Permission
   const getAudioFiles = async () => {
@@ -43,9 +38,22 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
     });
     media = await getAssetsAsync({
       mediaType: "audio",
-      //first: media.totalCount,
+      first: media.totalCount,
+      first: 50,
     });
-    setAudioFiles(media.assets);
+
+    setState((prevState) => {
+      const newAudioFiles = [...prevState.audioFiles, ...media.assets];
+
+      const newDataProvider =
+        prevState.dataProvider.cloneWithRows(newAudioFiles);
+
+      return {
+        ...prevState,
+        audioFiles: newAudioFiles,
+        dataProvider: newDataProvider,
+      };
+    });
   };
 
   const permessionAlert = () => {
@@ -66,57 +74,49 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const getPermission = async () => {
-    const permission = await getPermissionsAsync();
-    if (permission.granted) {
-      // get all the files
-      getAudioFiles();
-    }
-    if (!permission.granted && permission.canAskAgain) {
-      const { status, canAskAgain } = await requestPermissionsAsync();
-      if (status === "denied" && canAskAgain) {
-        // dipslay an alert that user have to accept permission
-        permessionAlert();
+    try {
+      const permission = await getPermissionsAsync();
+      if (permission.granted) {
+        // Permission granted, fetch audio files
+        await getAudioFiles();
+      } else if (permission.canAskAgain) {
+        // Permission not granted, but can ask again
+        const { status, canAskAgain } = await requestPermissionsAsync();
+        if (status === "granted") {
+          await getAudioFiles();
+        }
       }
-      if (status === "granted") {
-        // get All the media files
-        getAudioFiles();
-      }
-      if (status === "denied" && !canAskAgain) {
-        // display an Error
-        setPermissionError(true);
-      }
+    } catch (error) {
+      console.error("Error getting permissions:", error);
+      setPermissionError(true);
     }
   };
+
+  useEffect(() => {
+    try {
+      getPermission();
+    } catch (error) {
+      console.error("Error getting permission", error);
+    }
+  }, []);
+
   //---------------------------------------------
 
-  const togglePlayPause = () => {
-    if (currentTrack) {
-      setCurrentTrack({ ...currentTrack, paused: !currentTrack.paused });
-    } else {
-      currentTrack = initialSong;
-    }
-  };
+  const { audioFiles, currentTrack, dataProvider } = state;
 
-  if (!permissionError) {
+  if (audioFiles.length === 0) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>It looks like you denied permissions</Text>
-        <Image source={require("../assets/images/really.gif")}></Image>
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <ActivityIndicator size="large" />
       </View>
     );
   }
 
   return (
-    <AppContext.Provider value={{ currentTrack, setCurrentTrack, audioFiles }}>
+    <AppContext.Provider value={{ currentTrack, audioFiles, dataProvider }}>
       {children}
     </AppContext.Provider>
   );
 };
 
-export const useAppContext = (): AppContextState => {
-  const context = useContext(AppContext);
-  if (!context) {
-    throw new Error("useAppContext must be used within an AppProvider");
-  }
-  return context;
-};
+export default AppContext;

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Image, StyleSheet, Text, TextInput, View } from "react-native";
 import { SvgUri } from "react-native-svg";
 import SearchSvg from "../assets/icons/search-alt.svg";
 import { Feather, Entypo, Fontisto } from "@expo/vector-icons";
-import { useAppContext } from "../context/AppContext";
+import AppContext, { useAppContext } from "../context/AppContext";
 
 const SearchBox = () => {
-  const { audioFiles } = useAppContext();
+  const { currentTrack, audioFiles, dataProvider } = useContext(AppContext);
   const [postText, setPostText] = useState("");
   return (
     <View style={styles.headerContainer}>

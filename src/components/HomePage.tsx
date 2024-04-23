@@ -5,6 +5,10 @@ import {
   StyleSheet,
   Pressable,
   ScrollView,
+  Dimensions,
+  ActivityIndicator,
+  FlatListComponent,
+  FlatList,
 } from "react-native";
 import SearchBox from "./SearchBox";
 import NavButton from "./NavButton";
@@ -13,36 +17,39 @@ import { MARGIN } from "../constants/layout";
 import songs, { Song } from "../constants/songs";
 import SongItem from "./SongItem";
 import PlayingBox from "./PlayingBox";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { useAppContext } from "../context/AppContext";
+import {
+  DataProvider,
+  LayoutProvider,
+  RecyclerListView,
+} from "recyclerlistview";
+import AppContext from "../context/AppContext";
 
 function HomeScreen({ navigation, route }) {
-  const { setCurrentTrack, currentTrack, audioFiles } = useAppContext();
+  const { audioFiles, dataProvider } = useContext(AppContext);
+  const [loading, setLoading] = useState(true);
+  //const [tracks, setTracks] = useState([]);
+  useEffect(() => {
+    console.log(audioFiles);
+  }, []);
+
   const navigateToScreen = (screenName: string) => {
     navigation.navigate(screenName);
   };
-
-  const playTrack = (song) => {
-    setCurrentTrack(song);
-  };
-
-  useEffect(() => {
-    console.log("New State:", currentTrack);
-  }, [currentTrack]);
 
   return (
     <View style={styles.homePageContainer}>
       <SearchBox />
       <View style={styles.navigationButtons}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {Object.values(SCREEN_NAMES).map((screenName) => (
+          {Object.values(SCREEN_NAMES).map((screenName, index) => (
             <NavButton
-              key={screenName}
+              key={index}
               title={screenName}
               onPress={() => navigateToScreen(screenName)}
             />
@@ -60,23 +67,22 @@ function HomeScreen({ navigation, route }) {
           }}
         />
       </View>
-      {/* The Songs List */}
-
-      <View>
-        <ScrollView style={styles.songsContainerScroll}>
-          {audioFiles.map((song) => (
+      <View style={{ flex: 1 }}>
+        <FlatList
+          data={audioFiles}
+          renderItem={(song) => (
             <SongItem
-              title={song.filename}
-              key={song.id}
+              title={song.item.filename}
               onPress={() => playTrack(song)}
+              key={song?.id}
             />
-          ))}
-        </ScrollView>
+          )}
+        />
       </View>
 
       <View>
         <PlayingBox
-          title={currentTrack?.filename}
+          title={"curren track"}
           subtitle={"subtitle"}
           onPress={() => {
             navigation.navigate("PlayingTrack");
@@ -104,3 +110,13 @@ const styles = StyleSheet.create({
   },
 });
 export default HomeScreen;
+
+/*  <ScrollView style={styles.songsContainerScroll}>
+          {audioFiles.map((song) => (
+            <SongItem
+              title={song.filename}
+              key={song.id}
+              onPress={() => playTrack(song)}
+            />
+          ))}
+        </ScrollView>  */
